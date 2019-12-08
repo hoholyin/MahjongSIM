@@ -10,4 +10,8 @@ public class Character implements Tile {
     public int getValue() {
         return value;
     }
+
+    public String toString() {
+        return value + "W";
+    }
 }

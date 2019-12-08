@@ -10,4 +10,8 @@ public class Bamboo implements Tile {
     public int getValue() {
         return value;
     }
+
+    public String toString() {
+        return value + "B";
+    }
 }
