@@ -1,14 +1,14 @@
 import tiles.Bamboo;
 import tiles.Character;
 import tiles.Circle;
-import tiles.Tile;
+import tiles.Suit;
 
 public class Parser {
     private static final String BAMBOO_STRING = "B";
     private static final String CIRCLE_STRING = "C";
     private static final String CHARACTER_STRING = "W";
 
-    public Tile parse(String input) throws IllegalArgumentException {
+    public Suit parse(String input) throws IllegalArgumentException {
         // now we assume input is valid (number followed by C, B or W)
         int value = extractValue(input);
         if (isBamboo(input)) {
