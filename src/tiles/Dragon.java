@@ -1,5 +1,7 @@
 package tiles;
 
+import java.util.Objects;
+
 public class Dragon implements Tile {
     private DragonType dragonType;
 
@@ -17,5 +19,15 @@ public class Dragon implements Tile {
             return "WHITE";
         }
         return "Error";
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.toString());
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return (other instanceof Dragon) && ((Dragon) other).dragonType.equals(this.dragonType);
     }
 }

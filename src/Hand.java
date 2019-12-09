@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.stream.IntStream;
 
 import tiles.Bamboo;
 import tiles.Circle;
@@ -41,21 +43,49 @@ public class Hand {
     }
 
     public Hand add(Tile tile) {
+        return editHand(tile, true);
+    }
+
+    public Hand remove(Tile tile) {
+        return editHand(tile, false);
+    }
+
+    private Hand editHand(Tile tile, boolean isAdd) {
         ArrayList<Bamboo> newBamboos = new ArrayList<>(this.bamboos);
         ArrayList<Circle> newCircles = new ArrayList<>(this.circles);
         ArrayList<Character> newCharacters = new ArrayList<>(this.characters);
         ArrayList<Dragon> newDragons = new ArrayList<>(this.dragons);
         ArrayList<Wind> newWinds = new ArrayList<>(this.winds);
         if (tile instanceof Bamboo) {
-            newBamboos.add((Bamboo) tile);
+            if (isAdd) {
+                newBamboos.add((Bamboo) tile);
+            } else {
+                newBamboos.remove(tile);
+            }
         } else if (tile instanceof Circle) {
-            newCircles.add((Circle) tile);
+            if (isAdd) {
+                newCircles.add((Circle) tile);
+            } else {
+                newCircles.remove(tile);
+            }
         } else if (tile instanceof Character) {
-            newCharacters.add((Character) tile);
+            if (isAdd) {
+                newCharacters.add((Character) tile);
+            } else {
+                newCharacters.remove(tile);
+            }
         } else if (tile instanceof Dragon) {
-            newDragons.add((Dragon) tile);
+            if (isAdd) {
+                newDragons.add((Dragon) tile);
+            } else {
+                newDragons.remove(tile);
+            }
         } else if (tile instanceof Wind) {
-            newWinds.add((Wind) tile);
+            if (isAdd) {
+                newWinds.add((Wind) tile);
+            } else {
+                newWinds.remove(tile);
+            }
         }
         return new Hand(newBamboos, newCircles, newCharacters, newDragons, newWinds);
     }
@@ -83,20 +113,112 @@ public class Hand {
         hand = hand.add(new Character(7));
         hand = hand.add(new Character(8));
         hand = hand.add(new Character(9));
-        hand = hand.add(new Dragon(DragonType.RED));
-        hand = hand.add(new Wind(WindType.NORTH));
+        hand = hand.add(new Character(9));
+        hand = hand.add(new Character(9));
         return hand;
     }
 
-    public ArrayList<Suit> solve() {
+    public ArrayList<Tile> solve() {
         assert count() == 13;
-        ArrayList<Suit> remainingTilesOnTable = getRemainingTiles(this);
-        return remainingTilesOnTable;
+        ArrayList<Tile> remainingTilesOnTable = getRemainingTiles(this);
+        ArrayList<Tile> winningTiles = new ArrayList<>();
+        Hand originalHand = this;
+        for (Tile t : remainingTilesOnTable) {
+            Hand newHand = originalHand.add(t);
+            if (newHand.isWinningHand()) {
+                winningTiles.add(t);
+            }
+        }
+        return winningTiles;
     }
 
-    private static ArrayList<Suit> getRemainingTiles(Hand hand) {
-        ArrayList<Suit> suits = new ArrayList<>();
-        return suits;
+    private boolean isWinningHand() {
+        assert count() == 14;
+        Hand currentHand = this;
+        // 0 tai also considered win
+        ArrayList<Tile> eyes = this.extractEyes();
+        for (Tile t : eyes) {
+            Hand newHand = currentHand.remove(t);
+            newHand = newHand.remove(t);
+            System.out.println(newHand);
+        }
+        return true;
+    }
+
+    private ArrayList<Tile> extractEyes() {
+        HashSet<Tile> noDuplicates = new HashSet<>();
+        noDuplicates.addAll(this.characters);
+        noDuplicates.addAll(this.dragons);
+        noDuplicates.addAll(this.circles);
+        noDuplicates.addAll(this.bamboos);
+        noDuplicates.addAll(this.winds);
+
+        ArrayList<Tile> hand = new ArrayList<>();
+        hand.addAll(this.characters);
+        hand.addAll(this.dragons);
+        hand.addAll(this.circles);
+        hand.addAll(this.bamboos);
+        hand.addAll(this.winds);
+
+        noDuplicates.forEach(tile -> hand.remove(tile));
+
+        HashSet<Tile> handNoDuplicates = new HashSet<>(hand);
+        return new ArrayList<>(handNoDuplicates);
+    }
+
+    private ArrayList<Bamboo> getBamboos() {
+        return bamboos;
+    }
+
+    private ArrayList<Circle> getCircles() {
+        return circles;
+    }
+
+    private ArrayList<Character> getCharacters() {
+        return characters;
+    }
+
+    private ArrayList<Dragon> getDragons() {
+        return dragons;
+    }
+
+    private ArrayList<Wind> getWinds() {
+        return winds;
+    }
+
+    private static ArrayList<Tile> getRemainingTiles(Hand hand) {
+        ArrayList<Tile> tiles = getDefaultTiles();
+        hand.getBamboos().forEach(tiles::remove);
+        hand.getCircles().forEach(tiles::remove);
+        hand.getCharacters().forEach(tiles::remove);
+        hand.getWinds().forEach(tiles::remove);
+        hand.getDragons().forEach(tiles::remove);
+        HashSet<Tile> set = new HashSet<>(tiles); //remove duplicates
+        return new ArrayList<>(set);
+    }
+
+    private static ArrayList<Tile> getDefaultTiles() {
+        ArrayList<Tile> tiles = new ArrayList<>();
+
+        IntStream.rangeClosed(1, 9).forEach(value -> {
+            IntStream.rangeClosed(1, 4).forEach(i -> {
+                tiles.add(new Bamboo(value));
+                tiles.add(new Circle(value));
+                tiles.add(new Character((value)));
+            });
+        });
+
+        IntStream.rangeClosed(1, 4).forEach(i -> {
+            tiles.add(new Wind(WindType.NORTH));
+            tiles.add(new Wind(WindType.SOUTH));
+            tiles.add(new Wind(WindType.EAST));
+            tiles.add(new Wind(WindType.WEST));
+
+            tiles.add(new Dragon(DragonType.RED));
+            tiles.add(new Dragon(DragonType.GREEN));
+            tiles.add(new Dragon(DragonType.WHITE));
+        });
+        return tiles;
     }
 
 }

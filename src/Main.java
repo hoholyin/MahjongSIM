@@ -1,3 +1,7 @@
+import java.util.ArrayList;
+
+import tiles.Tile;
+
 public class Main {
     public static void main(String args[]) {
         /*
@@ -11,6 +15,7 @@ public class Main {
         }
         */
         Hand myHand = Hand.createSampleHand();
+        ArrayList<Tile> result = myHand.solve();
         System.out.println(myHand);
     }
 }

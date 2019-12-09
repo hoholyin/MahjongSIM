@@ -1,5 +1,7 @@
 package tiles;
 
+import java.util.Objects;
+
 public class Character implements Suit {
     private int value;
 
@@ -14,5 +16,15 @@ public class Character implements Suit {
 
     public String toString() {
         return value + "W";
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.toString());
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return (other instanceof Character) && ((Character) other).value == this.value;
     }
 }

@@ -1,5 +1,7 @@
 package tiles;
 
+import java.util.Objects;
+
 public class Wind implements Tile {
     private WindType windType;
 
@@ -19,5 +21,15 @@ public class Wind implements Tile {
             return "W";
         }
         return "Error";
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.toString());
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        return (other instanceof Wind) && ((Wind) other).windType.equals(this.windType);
     }
 }
