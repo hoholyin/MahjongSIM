@@ -16,6 +16,6 @@ public class Main {
         */
         Hand myHand = Hand.createSampleHand();
         ArrayList<Tile> result = myHand.solve();
-        System.out.println(myHand);
+        System.out.println(result);
     }
 }

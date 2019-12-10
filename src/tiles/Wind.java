@@ -2,7 +2,7 @@ package tiles;
 
 import java.util.Objects;
 
-public class Wind implements Tile {
+public class Wind implements Tile, Comparable<Wind> {
     private WindType windType;
 
     public Wind(WindType windType) {
@@ -26,6 +26,11 @@ public class Wind implements Tile {
     @Override
     public int hashCode() {
         return Objects.hashCode(this.toString());
+    }
+
+    @Override
+    public int compareTo(Wind other) {
+        return this.toString().compareTo(other.toString());
     }
 
     @Override

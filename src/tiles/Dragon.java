@@ -2,7 +2,7 @@ package tiles;
 
 import java.util.Objects;
 
-public class Dragon implements Tile {
+public class Dragon implements Tile, Comparable<Dragon> {
     private DragonType dragonType;
 
     public Dragon(DragonType dragonType) {
@@ -24,6 +24,11 @@ public class Dragon implements Tile {
     @Override
     public int hashCode() {
         return Objects.hashCode(this.toString());
+    }
+
+    @Override
+    public int compareTo(Dragon other) {
+        return this.toString().compareTo(other.toString());
     }
 
     @Override

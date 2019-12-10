@@ -2,7 +2,7 @@ package tiles;
 
 import java.util.Objects;
 
-public class Circle implements Suit {
+public class Circle implements Suit, Comparable<Circle> {
     private int value;
 
     public Circle(int value) {
@@ -19,8 +19,21 @@ public class Circle implements Suit {
     }
 
     @Override
+    public Suit getNextTile() throws IllegalArgumentException {
+        if (this.value == MAX_VALUE) {
+            throw new IllegalArgumentException();
+        }
+        return new Circle(this.value + 1);
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hashCode(this.toString());
+    }
+
+    @Override
+    public int compareTo(Circle other) {
+        return Integer.compare(this.value, other.value);
     }
 
     @Override

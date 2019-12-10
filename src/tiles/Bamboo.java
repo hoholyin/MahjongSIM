@@ -2,7 +2,7 @@ package tiles;
 
 import java.util.Objects;
 
-public class Bamboo implements Suit {
+public class Bamboo implements Suit, Comparable<Bamboo> {
     private int value;
 
     public Bamboo(int value) {
@@ -14,8 +14,21 @@ public class Bamboo implements Suit {
         return value;
     }
 
+    @Override
+    public Suit getNextTile() throws IllegalArgumentException {
+        if (this.value == MAX_VALUE) {
+            throw new IllegalArgumentException();
+        }
+        return new Bamboo(this.value + 1);
+    }
+
     public String toString() {
         return value + "B";
+    }
+
+    @Override
+    public int compareTo(Bamboo other) {
+        return Integer.compare(this.value, other.value);
     }
 
     @Override
