@@ -144,23 +144,18 @@ public class Hand {
         hand = hand.add(new Character(9));
         hand = hand.add(new Character(9));
         hand = hand.add(new Character(9));
+        hand = hand.add(new Character(9));
         return hand.reOrder();
     }
 
     public ArrayList<Tile> solve() {
-        assert count() == 13;
+        assert count() >= 13;
         ArrayList<Tile> remainingTilesOnTable = getRemainingTiles(this);
         ArrayList<Tile> winningTiles = new ArrayList<>();
         Hand originalHand = this;
         for (Tile t : remainingTilesOnTable) {
             Hand newHand = originalHand.add(t);
-            System.out.println("Added " + t);
-            if (t.equals(new Character(9))) {
-                int i = 0;
-            }
-            System.out.println(newHand);
             if (newHand.isWinningHand()) {
-                System.out.println("winning");
                 winningTiles.add(t);
             }
         }
