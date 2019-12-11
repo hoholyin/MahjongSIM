@@ -5,6 +5,7 @@ import tiles.Tile;
 
 public class Main {
     public static void main(String args[]) {
+        /*
         Hand myHand = new Hand();
         Parser parser = new Parser();
 
@@ -13,7 +14,8 @@ public class Main {
             Tile current = parser.parse(sc.next());
             myHand = myHand.add(current);
         }
-        //Hand myHand = Hand.createSampleHand();
+         */
+        Hand myHand = Hand.createSampleHand();
         ArrayList<Tile> result = myHand.solve();
         String message = resultMessage(result);
         System.out.println(message);

@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.stream.IntStream;
@@ -141,7 +142,6 @@ public class Hand {
         hand = hand.add(new Character(6));
         hand = hand.add(new Character(7));
         hand = hand.add(new Character(8));
-        hand = hand.add(new Character(9));
         hand = hand.add(new Character(9));
         hand = hand.add(new Character(9));
         hand = hand.add(new Character(9));
@@ -328,52 +328,36 @@ public class Hand {
 
     private boolean containsCount(Tile t, int count) {
         if (t instanceof Bamboo) {
-            return this.bamboos
-                    .stream()
-                    .filter(bamboo -> bamboo.equals(t))
-                    .count() == count;
+            return assertHasCountInCollection(bamboos, t, count);
         }
         if (t instanceof Circle) {
-            return this.circles
-                    .stream()
-                    .filter(circle -> circle.equals(t))
-                    .count() == count;
+            return assertHasCountInCollection(circles, t, count);
         }
         if (t instanceof Character) {
-            return this.characters
-                    .stream()
-                    .filter(character -> character.equals(t))
-                    .count() == count;
+            return assertHasCountInCollection(characters, t, count);
         }
         if (t instanceof Wind) {
-            return this.winds
-                    .stream()
-                    .filter(wind -> wind.equals(t))
-                    .count() == count;
+            return assertHasCountInCollection(winds, t, count);
         }
         if (t instanceof Dragon) {
-            return this.dragons
-                    .stream()
-                    .filter(dragon -> dragon.equals(t))
-                    .count() == count;
+            return assertHasCountInCollection(dragons, t, count);
         }
         return false;
     }
 
+    private static boolean assertHasCountInCollection(ArrayList<? extends Tile> tiles, Tile t, int count) {
+        return tiles
+                .stream()
+                .filter(tile -> tile.equals(t))
+                .count() == count;
+    }
+
     private ArrayList<Tile> extractEyes() {
         HashSet<Tile> noDuplicates = new HashSet<>();
-        noDuplicates.addAll(this.characters);
-        noDuplicates.addAll(this.dragons);
-        noDuplicates.addAll(this.circles);
-        noDuplicates.addAll(this.bamboos);
-        noDuplicates.addAll(this.winds);
+        addAllTilesIntoCollection(noDuplicates);
 
         ArrayList<Tile> hand = new ArrayList<>();
-        hand.addAll(this.characters);
-        hand.addAll(this.dragons);
-        hand.addAll(this.circles);
-        hand.addAll(this.bamboos);
-        hand.addAll(this.winds);
+        addAllTilesIntoCollection(hand);
 
         noDuplicates.forEach(tile -> hand.remove(tile));
 
@@ -381,33 +365,22 @@ public class Hand {
         return new ArrayList<>(handNoDuplicates);
     }
 
-    private ArrayList<Bamboo> getBamboos() {
-        return bamboos;
-    }
+    private void addAllTilesIntoCollection(Collection<Tile> collection) {
+        collection.addAll(this.characters);
+        collection.addAll(this.dragons);
+        collection.addAll(this.circles);
+        collection.addAll(this.bamboos);
+        collection.addAll(this.winds);
 
-    private ArrayList<Circle> getCircles() {
-        return circles;
-    }
-
-    private ArrayList<Character> getCharacters() {
-        return characters;
-    }
-
-    private ArrayList<Dragon> getDragons() {
-        return dragons;
-    }
-
-    private ArrayList<Wind> getWinds() {
-        return winds;
     }
 
     private static ArrayList<Tile> getRemainingTiles(Hand hand) {
         ArrayList<Tile> tiles = getDefaultTiles();
-        hand.getBamboos().forEach(tiles::remove);
-        hand.getCircles().forEach(tiles::remove);
-        hand.getCharacters().forEach(tiles::remove);
-        hand.getWinds().forEach(tiles::remove);
-        hand.getDragons().forEach(tiles::remove);
+        hand.bamboos.forEach(tiles::remove);
+        hand.circles.forEach(tiles::remove);
+        hand.characters.forEach(tiles::remove);
+        hand.winds.forEach(tiles::remove);
+        hand.dragons.forEach(tiles::remove);
         HashSet<Tile> set = new HashSet<>(tiles); //remove duplicates
         return new ArrayList<>(set);
     }
@@ -415,14 +388,27 @@ public class Hand {
     private static ArrayList<Tile> getDefaultTiles() {
         ArrayList<Tile> tiles = new ArrayList<>();
 
-        IntStream.rangeClosed(1, 9).forEach(value -> {
-            IntStream.rangeClosed(1, 4).forEach(i -> {
-                tiles.add(new Bamboo(value));
-                tiles.add(new Circle(value));
-                tiles.add(new Character((value)));
-            });
-        });
+        addAllSuits(tiles);
+        addFourOfEachDragon(tiles);
 
+        return tiles;
+    }
+
+    private static void addAllSuits(ArrayList<Tile> tiles) {
+        IntStream.rangeClosed(1, 9).forEach(value -> {
+            addFourOfEachSuit(tiles, value);
+        });
+    }
+
+    private static void addFourOfEachSuit(ArrayList<Tile> tiles, int value) {
+        IntStream.rangeClosed(1, 4).forEach(i -> {
+            tiles.add(new Bamboo(value));
+            tiles.add(new Circle(value));
+            tiles.add(new Character((value)));
+        });
+    }
+
+    private static void addFourOfEachDragon(ArrayList<Tile> tiles) {
         IntStream.rangeClosed(1, 4).forEach(i -> {
             tiles.add(new Wind(WindType.NORTH));
             tiles.add(new Wind(WindType.SOUTH));
@@ -433,7 +419,6 @@ public class Hand {
             tiles.add(new Dragon(DragonType.GREEN));
             tiles.add(new Dragon(DragonType.WHITE));
         });
-        return tiles;
     }
 
     @Override
