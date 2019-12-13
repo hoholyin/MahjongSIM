@@ -145,6 +145,7 @@ public class Hand {
         hand = hand.add(new Character(9));
         hand = hand.add(new Character(9));
         hand = hand.add(new Character(9));
+        hand = hand.add(new Character(9));
         return hand.reOrder();
     }
 
@@ -153,6 +154,9 @@ public class Hand {
         ArrayList<Tile> remainingTilesOnTable = getRemainingTiles(this);
         ArrayList<Tile> winningTiles = new ArrayList<>();
         Hand originalHand = this;
+        if (originalHand.isWinningHand()) {
+            winningTiles.add(null);
+        }
         for (Tile t : remainingTilesOnTable) {
             Hand newHand = originalHand.add(t);
             if (newHand.isWinningHand()) {
@@ -252,9 +256,17 @@ public class Hand {
     }
 
     private static Hand removeThree(Hand hand, Tile t) {
+        return remove(hand, t, 3);
+    }
+
+    private static Hand removeFour(Hand hand, Tile t) {
+        return remove(hand, t, 4);
+    }
+
+    private static Hand remove(Hand hand, Tile t, int count) {
         Hand newHand = hand;
-        if (hand.containsCount(t, 3)) {
-            for (int i = 0; i < 3; i++) {
+        if (hand.containsCount(t, count)) {
+            for (int i = 0; i < count; i++) {
                 newHand = newHand.remove(t);
             }
         }
@@ -284,31 +296,31 @@ public class Hand {
     private static Hand extractKong(Hand hand) {
         Hand newHand = hand;
         for (Tile t : hand.bamboos) {
-           newHand = removeTileIfKong(newHand, t);
+           newHand = removeFour(newHand, t);
            if (!isSameHand(newHand, hand)) {
                return newHand;
            }
         }
         for (Tile t : hand.circles) {
-            newHand = removeTileIfKong(newHand, t);
+            newHand = removeFour(newHand, t);
             if (!isSameHand(newHand, hand)) {
                 return newHand;
             }
         }
         for (Tile t : hand.characters) {
-            newHand = removeTileIfKong(newHand, t);
+            newHand = removeFour(newHand, t);
             if (!isSameHand(newHand, hand)) {
                 return newHand;
             }
         }
         for (Tile t : hand.winds) {
-            newHand = removeTileIfKong(newHand, t);
+            newHand = removeFour(newHand, t);
             if (!isSameHand(newHand, hand)) {
                 return newHand;
             }
         }
         for (Tile t : hand.dragons) {
-            newHand = removeTileIfKong(newHand, t);
+            newHand = removeFour(newHand, t);
             if (!isSameHand(newHand, hand)) {
                 return newHand;
             }
@@ -316,15 +328,6 @@ public class Hand {
         return newHand;
     }
 
-    private static Hand removeTileIfKong(Hand hand, Tile t) {
-        Hand newHand = hand;
-        if (hand.containsCount(t, 4)) {
-            for (int i = 0; i < 4; i++) {
-                newHand = newHand.remove(t);
-            }
-        }
-        return newHand;
-    }
 
     private boolean containsCount(Tile t, int count) {
         if (t instanceof Bamboo) {

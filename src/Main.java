@@ -21,13 +21,30 @@ public class Main {
         System.out.println(message);
     }
 
-    public static String resultMessage(ArrayList<Tile> winnableTiles) {
+    private static String resultMessage(ArrayList<Tile> winnableTiles) {
         if (winnableTiles.isEmpty()) {
             return "No winnable tiles!";
         }
         StringBuilder result = new StringBuilder();
-        result.append("Winnable tiles: " + winnableTiles.size() + "\n");
-        winnableTiles.stream().forEach(tile -> result.append(tile + "\n"));
-        return result.toString().substring(0, result.toString().length() - 1);
+        int numberOfWinnableTiles = (int) getNumberOfWinnableTiles(winnableTiles);
+        appendHeaderWithCount(result, numberOfWinnableTiles);
+        appendTilesToMessage(result, winnableTiles);
+        return trimNewline(result);
+    }
+
+    private static void appendHeaderWithCount(StringBuilder message, int count) {
+        message.append("Winnable tiles: " + count + "\n");
+    }
+
+    private static long getNumberOfWinnableTiles(ArrayList<Tile> tiles) {
+        return tiles.stream().filter(tile -> tile != null).count();
+    }
+
+    private static void appendTilesToMessage(StringBuilder message, ArrayList<Tile> tiles) {
+        tiles.stream().forEach(tile -> message.append(tile + "\n"));
+    }
+
+    private static String trimNewline(StringBuilder string) {
+        return string.toString().substring(0, string.toString().length() - 1);
     }
 }
